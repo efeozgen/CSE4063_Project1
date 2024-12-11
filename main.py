@@ -18,6 +18,7 @@ def handle_float(df, columns):
             print(f"Hata! '{column}' sütunu DataFrame'de bulunamadı.")
     return df
 
+
 def drop_columns(df, columns):
     return df.drop(columns=columns)
 
@@ -26,7 +27,8 @@ if __name__ == "__main__":
     row_data_path = "data/raw_data.json"
     df_raw = read_raw_data(row_data_path)
 
-    # print(nulls = detect_nulls(df_raw))
+    nulls = detect_nulls(df_raw)
+
     columns_to_convert = [
         "track_popularity",
         "danceability",
@@ -42,9 +44,24 @@ if __name__ == "__main__":
         "tempo",
         "duration_ms",
     ]
-    handle_float(df_raw, columns_to_convert)
-    print(df_raw[columns_to_convert])
-    
-    columns_to_drop = ['track_id', 'track_name', 'track_album_id', 'track_album_name', 'playlist_name', 'playlist_id']
-    df_clean = drop_columns(df_raw, columns_to_drop)
+
+    df = handle_float(df_raw, columns_to_convert)
+    # print(df[columns_to_convert])
+
+    columns_to_drop = [
+        "track_id",
+        "track_name",
+        "track_album_id",
+        "track_album_name",
+        "playlist_name",
+        "playlist_id",
+    ]
+    df_clean = drop_columns(df, columns_to_drop)
     print(df_clean.head())
+
+    # Popularity classification
+    bins = [0, 40, 70, 100]
+    labels = ["Low", "Medium", "High"]
+    df["popularity_class"] = pd.cut(df["track_popularity"].astype(int), bins=bins, labels=labels)
+    
+    print(df["popularity_class"].value_counts())
