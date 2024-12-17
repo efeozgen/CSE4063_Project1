@@ -1,2 +1,9 @@
 will drop:
 -> track_id
+
+categoric to numeric:
+-> track_artist -> frequency encoding
+-> track_album_release_date -> label encoding
+-> popularity_label -> label encoding
+-> playlist_genre -> one hot
+-> playlist_subgenre -> one hot

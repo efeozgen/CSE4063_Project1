@@ -1,6 +1,7 @@
 import pandas as pd
 import csv
 import json
+from feature_encoding import FeatureEncoder
 
 
 def read_data(datapath):
@@ -122,5 +123,19 @@ if __name__ == "__main__":
     
     df = drop_columns(df, ["track_id"])
     
+    encoder = FeatureEncoder(df)
+    
+    df = encoder.frequency_encode("track_artist")
+    df = encoder.label_encode("track_album_release_date")
+    df = encoder.label_encode("popularity_label")
+    df = encoder.one_hot_encode("playlist_genre", "genre")
+    df = encoder.one_hot_encode("playlist_subgenre", "subgenre")
+    
+    columns_to_drop = ["track_artist", "track_album_release_date", 
+                   "popularity_label", "playlist_genre", "playlist_subgenre"]
+    df = encoder.drop_original_columns(columns_to_drop)
+    
+    processed_df = encoder.get_dataframe()
+        
     write_clean_data(df)
     csv_to_json("data/clean_data.csv", "data/clean_data.json")
