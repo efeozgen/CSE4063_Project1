@@ -1,5 +1,6 @@
 will drop:
--> track_id
+-> track_id 
+DONE
 
 categoric to numeric:
 -> track_artist -> frequency encoding
@@ -7,3 +8,9 @@ categoric to numeric:
 -> popularity_label -> label encoding
 -> playlist_genre -> one hot
 -> playlist_subgenre -> one hot
+DONE
+
+train-test seperation
+-> low med high each same ratio in train and test
+-> Stratified Train-Test Split
+DONE

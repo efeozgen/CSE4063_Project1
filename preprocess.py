@@ -2,15 +2,13 @@ import pandas as pd
 import csv
 import json
 from feature_encoding import FeatureEncoder
-
+from sklearn.model_selection import train_test_split
 
 def read_data(datapath):
     return pd.read_csv(datapath, encoding="utf-8")
 
-
 def write_clean_data(df):
     return df.to_csv("data/clean_data.csv")
-
 
 def csv_to_json(csv_file, json_file):
     # CSV dosyasını JSON'a dönüştür
@@ -28,7 +26,6 @@ def csv_to_json(csv_file, json_file):
         f"CSV dosyasından JSON formatına dönüştürüldü ve {json_file} dosyasına kaydedildi."
     )
 
-
 def detect_nulls(df):
     return pd.DataFrame(
         {
@@ -37,9 +34,7 @@ def detect_nulls(df):
         }
     )
 
-
 def handle_float(df, columns):
-
     for column in columns:
         if column in df.columns:
             try:
@@ -50,14 +45,11 @@ def handle_float(df, columns):
             print(f"Hata! '{column}' sütunu DataFrame'de bulunamadı.")
     return df
 
-
 def drop_columns(df, columns):
     return df.drop(columns=columns)
 
-
 def handle_duplicates(df):
     return df.drop_duplicates(subset="track_id", keep="first")
-
 
 if __name__ == "__main__":
     datapath = "data/spotify_songs.csv"
@@ -82,8 +74,7 @@ if __name__ == "__main__":
     ]
 
     df = handle_float(df_raw, columns_to_convert)
-    # print(df[columns_to_convert])
-    # print(df)
+
     columns_to_drop = [
         "track_name",
         "track_album_id",
@@ -130,7 +121,6 @@ if __name__ == "__main__":
         labels=labels_release_date,
     )
 
-    # print(df["popularity_class"].value_counts())
     print(
         "number of duplicate track_id's before handle duplicate =>",
         df["track_id"].duplicated().sum(),
@@ -140,7 +130,6 @@ if __name__ == "__main__":
         "number of duplicate track_id's after handle duplicate =>",
         df["track_id"].duplicated().sum(),
     )
-    print(df["track_id"].duplicated())
 
     df = drop_columns(df, ["track_id"])
 
@@ -164,6 +153,20 @@ if __name__ == "__main__":
     df = encoder.drop_original_columns(columns_to_drop)
 
     processed_df = encoder.get_dataframe()
+
+    # Stratified Train-Test Split
+    X = processed_df.drop(columns=["popularity_label_encoded"])
+    y = processed_df["popularity_label_encoded"]
+
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.3, stratify=y, random_state=42
+    )
+
+    print("Train set dağılımı:")
+    print(y_train.value_counts(normalize=True))
+
+    print("Test set dağılımı:")
+    print(y_test.value_counts(normalize=True))
 
     write_clean_data(df)
     csv_to_json("data/clean_data.csv", "data/clean_data.json")
