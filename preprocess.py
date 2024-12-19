@@ -77,12 +77,21 @@ def preprocess_data(datapath):
 
     # Popularity labeling
     bins_popularity = [0, 40, 70, 100]
-    labels_popularity = ["Low", "Medium", "High"]
+    labels_popularity = [1, 2, 3]
     df["popularity_label"] = pd.cut(
         df["track_popularity"].astype(int),
         bins=bins_popularity,
         labels=labels_popularity,
+        right=False  # Aralıkların [start, end) olması için
     )
+    
+    # Eğer track_popularity 0 ise popularity_label'ı 1 olarak ayarla
+    df.loc[df["track_popularity"] == 0, "popularity_label"] = 1
+    
+    # Eğer track_popularity 100 ise popularity_label'ı 3 olarak ayarla
+    df.loc[df["track_popularity"] == 100, "popularity_label"] = 3
+    
+    # print(df["popularity_label"])
 
     # Release date labeling
     bins_date = [
@@ -113,11 +122,11 @@ def preprocess_data(datapath):
     df = encoder.label_encode("release_date_label")
     df = encoder.one_hot_encode("playlist_genre", "genre")
     df = encoder.one_hot_encode("playlist_subgenre", "subgenre")
-    df = encoder.label_encode("popularity_label")
+    # df = encoder.label_encode("popularity_label")
 
     columns_to_drop = [
         "track_artist", "track_album_release_date", "release_date_label",
-        "popularity_label", "track_popularity", "playlist_genre", 
+          "playlist_genre", 
         "playlist_subgenre",
     ]
     df = encoder.drop_original_columns(columns_to_drop)
