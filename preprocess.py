@@ -1,39 +1,37 @@
+# preprocess.py
 import pandas as pd
 import csv
 import json
 from feature_encoding import FeatureEncoder
-from sklearn.model_selection import train_test_split
 
+# Reading the dataset
 def read_data(datapath):
     return pd.read_csv(datapath, encoding="utf-8")
 
-def write_clean_data(df):
-    return df.to_csv("data/clean_data.csv")
+# Writing the cleaned dataset
+def write_clean_data(df, output_path):
+    df.to_csv(output_path, index=False)
 
+# Converting CSV to JSON
 def csv_to_json(csv_file, json_file):
-    # CSV dosyasını JSON'a dönüştür
     data = []
     with open(csv_file, encoding="utf-8") as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
             data.append(row)
 
-    # JSON dosyasına yaz
     with open(json_file, "w", encoding="utf-8") as jsonfile:
         json.dump(data, jsonfile, ensure_ascii=False, indent=4)
+    print(f"CSV dosyasından JSON formatına dönüştürüldü ve {json_file} dosyasına kaydedildi.")
 
-    print(
-        f"CSV dosyasından JSON formatına dönüştürüldü ve {json_file} dosyasına kaydedildi."
-    )
-
+# Detecting null values
 def detect_nulls(df):
-    return pd.DataFrame(
-        {
-            "nulls": df.isnull().sum(),
-            "Empty Strings": df.map(lambda x: x == None).sum(),
-        }
-    )
+    return pd.DataFrame({
+        "nulls": df.isnull().sum(),
+        "Empty Strings": df.apply(lambda x: x.eq(None).sum()),
+    })
 
+# Handling float conversions
 def handle_float(df, columns):
     for column in columns:
         if column in df.columns:
@@ -45,42 +43,35 @@ def handle_float(df, columns):
             print(f"Hata! '{column}' sütunu DataFrame'de bulunamadı.")
     return df
 
+# Dropping unnecessary columns
 def drop_columns(df, columns):
-    return df.drop(columns=columns)
+    return df.drop(columns=columns, errors="ignore")
 
+# Handling duplicate entries
 def handle_duplicates(df):
     return df.drop_duplicates(subset="track_id", keep="first")
 
-if __name__ == "__main__":
-    datapath = "data/spotify_songs.csv"
+# Preprocessing pipeline
+def preprocess_data(datapath):
     df_raw = read_data(datapath)
 
+    # Detect nulls
     nulls = detect_nulls(df_raw)
+    print("Null değerlerin özeti:")
+    print(nulls)
 
+    # Columns to convert to float
     columns_to_convert = [
-        "track_popularity",
-        "danceability",
-        "energy",
-        "key",
-        "loudness",
-        "mode",
-        "speechiness",
-        "acousticness",
-        "instrumentalness",
-        "liveness",
-        "valence",
-        "tempo",
-        "duration_ms",
+        "track_popularity", "danceability", "energy", "key", "loudness",
+        "mode", "speechiness", "acousticness", "instrumentalness",
+        "liveness", "valence", "tempo", "duration_ms",
     ]
-
     df = handle_float(df_raw, columns_to_convert)
 
+    # Columns to drop
     columns_to_drop = [
-        "track_name",
-        "track_album_id",
-        "track_album_name",
-        "playlist_name",
-        "playlist_id",
+        "track_name", "track_album_id", "track_album_name", 
+        "playlist_name", "playlist_id",
     ]
     df = drop_columns(df, columns_to_drop)
 
@@ -96,24 +87,13 @@ if __name__ == "__main__":
     # Release date labeling
     bins_date = [
         df["track_album_release_date"].min(),
-        "1970-01-01",
-        "1980-01-01",
-        "1990-01-01",
-        "2000-01-01",
-        "2010-01-01",
-        "2015-01-01",
-        "2020-01-01",
+        "1970-01-01", "1980-01-01", "1990-01-01", "2000-01-01",
+        "2010-01-01", "2015-01-01", "2020-01-01",
         df["track_album_release_date"].max(),
     ]
     labels_release_date = [
-        "<1970",
-        "1970-1980",
-        "1980-1990",
-        "1990-2000",
-        "2000-2010",
-        "2010-2015",
-        "2015-2020",
-        ">2020",
+        "<1970", "1970-1980", "1980-1990", "1990-2000",
+        "2000-2010", "2010-2015", "2015-2020", ">2020",
     ]
     df["release_date_label"] = pd.cut(
         df["track_album_release_date"].astype(str),
@@ -121,15 +101,9 @@ if __name__ == "__main__":
         labels=labels_release_date,
     )
 
-    print(
-        "number of duplicate track_id's before handle duplicate =>",
-        df["track_id"].duplicated().sum(),
-    )
+    print(f"number of duplicate track_id's before handle duplicate => {df['track_id'].duplicated().sum()}")
     df = handle_duplicates(df)
-    print(
-        "number of duplicate track_id's after handle duplicate =>",
-        df["track_id"].duplicated().sum(),
-    )
+    print(f"number of duplicate track_id's after handle duplicate => {df['track_id'].duplicated().sum()}")
 
     df = drop_columns(df, ["track_id"])
 
@@ -142,31 +116,10 @@ if __name__ == "__main__":
     df = encoder.label_encode("popularity_label")
 
     columns_to_drop = [
-        "track_artist",
-        "track_album_release_date",
-        "release_date_label",
-        "popularity_label",
-        "track_popularity",
-        "playlist_genre",
+        "track_artist", "track_album_release_date", "release_date_label",
+        "popularity_label", "track_popularity", "playlist_genre", 
         "playlist_subgenre",
     ]
     df = encoder.drop_original_columns(columns_to_drop)
 
-    processed_df = encoder.get_dataframe()
-
-    # Stratified Train-Test Split
-    X = processed_df.drop(columns=["popularity_label_encoded"])
-    y = processed_df["popularity_label_encoded"]
-
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.3, stratify=y, random_state=42
-    )
-
-    print("Train set dağılımı:")
-    print(y_train.value_counts(normalize=True))
-
-    print("Test set dağılımı:")
-    print(y_test.value_counts(normalize=True))
-
-    write_clean_data(df)
-    csv_to_json("data/clean_data.csv", "data/clean_data.json")
+    return encoder.get_dataframe()
