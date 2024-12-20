@@ -8,10 +8,18 @@ class FeatureEncoder:
         self.label_encoders = {}
 
     def frequency_encode(self, column_name):
-        """Apply Frequency Encoding to a column."""
+        """Apply Frequency Encoding to a column and handle null/empty values."""
+        # Değerlerdeki boş veya null değerleri 'NaN' olarak ele al
+        self.df[column_name] = self.df[column_name].replace("", float("nan")).fillna("NaN")
+        
+        # Değerlerin frekansını hesapla
         frequency = self.df[column_name].value_counts()
-        self.df[f"{column_name}_encoded"] = self.df[column_name].map(frequency)
+
+        # Yeni encoded sütunu oluştur ve boş/null değerler için özel bir değer ekle
+        self.df[f"{column_name}_encoded"] = self.df[column_name].map(frequency).fillna(0)  # Boş/null değerler için 0 kullan
+        
         return self.df
+
 
     def label_encode(self, column_name):
         """Apply Label Encoding to a column."""

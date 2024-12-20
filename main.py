@@ -1,5 +1,4 @@
 # main.py
-from boosting_ensemble import BoostingEnsemble
 from preprocess import preprocess_data, write_clean_data, csv_to_json
 from sklearn.model_selection import train_test_split
 
@@ -32,11 +31,11 @@ if __name__ == "__main__":
     print(y_test.value_counts(normalize=True))
     
     
-    # Train Boosting Ensemble
-    boosting_model = BoostingEnsemble(n_estimators=100, learning_rate=0.1)
-    boosting_model.fit(X_train, y_train)
+    # # Train Boosting Ensemble
+    # boosting_model = BoostingEnsemble(n_estimators=100, learning_rate=0.1)
+    # boosting_model.fit(X_train, y_train)
 
-    # Evaluate model
-    accuracy = boosting_model.evaluate(X_test, y_test)
-    print(f"Boosting Ensemble Accuracy: {accuracy:.2f}")
+    # # Evaluate model
+    # accuracy = boosting_model.evaluate(X_test, y_test)
+    # print(f"Boosting Ensemble Accuracy: {accuracy:.2f}")
 

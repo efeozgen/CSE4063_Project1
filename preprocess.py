@@ -163,6 +163,8 @@ def preprocess_data(datapath):
     df = encoder.one_hot_encode("playlist_genre", "genre")
     df = encoder.one_hot_encode("playlist_subgenre", "subgenre")
     # df = encoder.label_encode("popularity_label")
+    
+    # df = df[df["track_artist_encoded"] != ""]
 
     columns_to_drop = [
         "track_artist",
