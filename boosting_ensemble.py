@@ -19,6 +19,8 @@ class BoostingEnsemble:
 
             predictions = model.predict(X)
             incorrect = (predictions != y)  # Yanlış sınıflandırılan örnekler
+            
+            
 
             error = np.sum(w * incorrect) / np.sum(w)  # Hata oranı
             if error == 0:
@@ -46,9 +48,10 @@ class BoostingEnsemble:
     def evaluate(self, X, y):
         predictions = self.predict(X)
         
-        # Tahminleri ve gerçek etiketleri yazdırma
+        print("False Predictions:")
         for true_label, predicted_label in zip(y, predictions):
-            print(f"Gerçek: {true_label}, Tahmin: {predicted_label}")
+            if(true_label != predicted_label):
+                print(f"Gerçek: {true_label}, Tahmin: {predicted_label}")
         
         # Doğruluk hesaplama
         accuracy = np.mean(predictions == y)

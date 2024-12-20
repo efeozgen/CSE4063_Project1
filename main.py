@@ -1,7 +1,7 @@
 # main.py
+from boosting_ensemble import BoostingEnsemble
 from preprocess import preprocess_data, write_clean_data, csv_to_json
 from sklearn.model_selection import train_test_split
-from boosting_ensemble import BoostingEnsemble
 
 if __name__ == "__main__":
     datapath = "data/spotify_songs.csv"
@@ -11,7 +11,7 @@ if __name__ == "__main__":
     # Preprocess the data
     processed_df = preprocess_data(datapath)
     
-    print("nan -> ", processed_df["popularity_label"].unique())  
+    print("unique -> ", processed_df["popularity_label"].unique())  
 
     # Save processed data
     write_clean_data(processed_df, processed_data_path)
