@@ -67,10 +67,11 @@ def handle_duplicates(df):
 def preprocess_data(datapath):
     df_raw = read_data(datapath)
 
+    # Commented
     # Detect nulls
     nulls = detect_nulls(df_raw)
-    print("Null değerlerin özeti:")
-    print(nulls)
+    # print("Null değerlerin özeti:")
+    # print(nulls)
 
     # Columns to convert to float
     columns_to_convert = [
@@ -145,14 +146,14 @@ def preprocess_data(datapath):
         bins=bins_date,
         labels=labels_release_date,
     )
-
-    print(
-        f"number of duplicate track_id's before handle duplicate => {df['track_id'].duplicated().sum()}"
-    )
-    df = handle_duplicates(df)
-    print(
-        f"number of duplicate track_id's after handle duplicate => {df['track_id'].duplicated().sum()}"
-    )
+    # Commented
+    # print(
+    #     f"number of duplicate track_id's before handle duplicate => {df['track_id'].duplicated().sum()}"
+    # )
+    # df = handle_duplicates(df)
+    # print(
+    #     f"number of duplicate track_id's after handle duplicate => {df['track_id'].duplicated().sum()}"
+    # )
 
     df = drop_columns(df, ["track_id"])
 

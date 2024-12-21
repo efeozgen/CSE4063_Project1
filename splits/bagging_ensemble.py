@@ -12,4 +12,5 @@ class BaggingEnsemble:
         indices = rng.choice(len(X), size=n_samples, replace=True)
         X_bootstrap = X.iloc[indices]
         y_bootstrap = y.iloc[indices]
-        return X_bootstrap, y_bootstrap
+        # Return the entire dataset as test set for simplicity
+        yield X_bootstrap, X, y_bootstrap, y

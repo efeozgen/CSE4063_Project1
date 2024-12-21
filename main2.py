@@ -17,8 +17,8 @@ def run_all_models_with_splits(df):
     y = df["popularity_label"]
 
     splits = [
-        ("Cross Validation", CrossValidation(n_splits=5)),
-        ("Bagging", BaggingEnsemble(n_samples=len(X))),
+        #("Cross Validation", CrossValidation(n_splits=5)),
+        #("Bagging", BaggingEnsemble(n_samples=len(X))),
         ("Boosting", BoostingEnsemble(step=0.2)),
     ]
 
