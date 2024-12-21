@@ -67,12 +67,6 @@ def handle_duplicates(df):
 def preprocess_data(datapath):
     df_raw = read_data(datapath)
 
-    # Commented
-    # Detect nulls
-    nulls = detect_nulls(df_raw)
-    # print("Null değerlerin özeti:")
-    # print(nulls)
-
     # Columns to convert to float
     columns_to_convert = [
         "track_popularity",
@@ -172,9 +166,14 @@ def preprocess_data(datapath):
         "track_album_release_date",
         "release_date_label",
         "playlist_genre",
-        "track_popularity",
+        #"track_popularity",
         "playlist_subgenre",
     ]
     df = encoder.drop_original_columns(columns_to_drop)
+
+    # # Detect nulls
+    # nulls = detect_nulls(df)
+    # print("Null değerlerin özeti:")
+    # print(nulls)
 
     return encoder.get_dataframe()
