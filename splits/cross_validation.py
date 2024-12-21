@@ -1,7 +1,7 @@
 from sklearn.model_selection import StratifiedKFold
 
 class CrossValidation:
-    def __init__(self, n_splits=5, random_state=42):
+    def __init__(self, n_splits, random_state=42):
         self.n_splits = n_splits
         self.random_state = random_state
 

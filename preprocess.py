@@ -25,9 +25,9 @@ def csv_to_json(csv_file, json_file):
 
     with open(json_file, "w", encoding="utf-8") as jsonfile:
         json.dump(data, jsonfile, ensure_ascii=False, indent=4)
-    print(
-        f"CSV dosyasından JSON formatına dönüştürüldü ve {json_file} dosyasına kaydedildi."
-    )
+    # print(
+    #     f"CSV dosyasından JSON formatına dönüştürüldü ve {json_file} dosyasına kaydedildi."
+    # )
 
 
 # Detecting null values
@@ -67,10 +67,10 @@ def handle_duplicates(df):
 def preprocess_data(datapath):
     df_raw = read_data(datapath)
 
-    # Detect nulls
-    nulls = detect_nulls(df_raw)
-    print("Null değerlerin özeti:")
-    print(nulls)
+    # # Detect nulls
+    # nulls = detect_nulls(df_raw)
+    # print("Null değerlerin özeti:")
+    # print(nulls)
 
     # Columns to convert to float
     columns_to_convert = [
@@ -146,13 +146,13 @@ def preprocess_data(datapath):
         labels=labels_release_date,
     )
 
-    print(
-        f"number of duplicate track_id's before handle duplicate => {df['track_id'].duplicated().sum()}"
-    )
+    # print(
+    #     f"number of duplicate track_id's before handle duplicate => {df['track_id'].duplicated().sum()}"
+    # )
     df = handle_duplicates(df)
-    print(
-        f"number of duplicate track_id's after handle duplicate => {df['track_id'].duplicated().sum()}"
-    )
+    # print(
+    #     f"number of duplicate track_id's after handle duplicate => {df['track_id'].duplicated().sum()}"
+    # )
 
     df = drop_columns(df, ["track_id"])
 
@@ -175,5 +175,10 @@ def preprocess_data(datapath):
         "playlist_subgenre",
     ]
     df = encoder.drop_original_columns(columns_to_drop)
+    
+    # # Detect nulls
+    # nulls = detect_nulls(df)
+    # print("Null değerlerin özeti:")
+    # print(nulls)
 
     return encoder.get_dataframe()

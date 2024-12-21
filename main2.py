@@ -10,6 +10,7 @@ from classifiers.ann_one_hidden import ANNOneHiddenLayer
 from classifiers.ann_two_hidden import ANNTwoHiddenLayers
 from classifiers.svm import SVMClassifier
 from preprocess import preprocess_data, write_clean_data, csv_to_json
+from splits.holdout import HoldoutSplit
 
 
 def run_all_models_with_splits(df):
@@ -17,9 +18,10 @@ def run_all_models_with_splits(df):
     y = df["popularity_label"]
 
     splits = [
+        ("Holdout", HoldoutSplit(test_size=0.3)),
         ("Cross Validation", CrossValidation(n_splits=5)),
-        ("Bagging", BaggingEnsemble(n_samples=len(X))),
-        ("Boosting", BoostingEnsemble(step=0.2)),
+        ("Bagging", BaggingEnsemble(n_samples=len(X), test_size=0.2)),
+        ("Boosting", BoostingEnsemble(step=0.2, test_size=0.2)),
     ]
 
     models = [
