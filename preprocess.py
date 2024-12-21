@@ -3,6 +3,8 @@ import pandas as pd
 import csv
 import json
 from feature_encoding import FeatureEncoder
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 
 # Reading the dataset
@@ -101,7 +103,7 @@ def preprocess_data(datapath):
     df = drop_columns(df, columns_to_drop)
 
     # Popularity labeling
-    bins_popularity = [0, 40, 70, 100]
+    bins_popularity = [0, 33, 67, 100]
     labels_popularity = [1, 2, 3]
     df["popularity_label"] = pd.cut(
         df["track_popularity"].astype(int),
@@ -166,19 +168,82 @@ def preprocess_data(datapath):
     
     # df = df[df["track_artist_encoded"] != ""]
 
+
+
     columns_to_drop = [
         "track_artist",
         "track_album_release_date",
         "release_date_label",
         "playlist_genre",
-        "track_popularity",
+        # "track_popularity",
         "playlist_subgenre",
     ]
+    # columns_to_drop = [
+    # "track_artist",
+    # "track_album_release_date",
+    # "release_date_label",
+    # "playlist_genre",
+    # "track_popularity",
+    # "playlist_subgenre",
+    # "key",
+    # "mode",
+    # "speechiness",
+    # "valence",
+    # "tempo",
+    # # "genre_r&b",
+    # # "genre_rap",
+    # # "genre_rock",
+    # # "subgenre_album rock",
+    # # "subgenre_classic rock",
+    # # "subgenre_electropop",
+    # # "subgenre_indie poptimism",
+    # # "subgenre_latin hip hop",
+    # # "subgenre_pop edm",
+    # # "subgenre_tropical"
+    # ]
     df = encoder.drop_original_columns(columns_to_drop)
+    
+    # Korelasyon matrisini hesaplayın
+    correlation_matrix = df.corr()
+
+    # track_popularity ve popularity_label ile olan korelasyonları seçin
+    correlation_with_target = correlation_matrix[["track_popularity", "popularity_label"]]
+
+    # Korelasyon matrisini görselleştirin
+    plt.figure(figsize=(10, 8))
+    sns.heatmap(correlation_with_target, annot=True, cmap="coolwarm", vmin=-0.15, vmax=0.15)
+    plt.title("Correlation with track_popularity and popularity_label")
+    plt.show()
+    
+    # Korelasyonu düşük olan özellikleri belirleyin
+    threshold = 0.05  # Korelasyon eşiği
+    low_correlation_features = correlation_with_target[
+        (correlation_with_target["track_popularity"].abs() < threshold) &
+        (correlation_with_target["popularity_label"].abs() < threshold)
+    ].index.tolist()
+    
+    low_correlation_features = [feature for feature in low_correlation_features if "subgenre" not in feature and "genre" not in feature]
+
+    # Korelasyonu düşük olan özellikleri veri setinden düşürün
+    df = df.drop(columns=low_correlation_features)
+    df = df.drop(columns=["track_popularity"])
+    
+    drops = pd.DataFrame(
+        {
+            "Dropped Features": low_correlation_features,
+        }
+    )
+    
+    print(drops)
+    
+    # df.to_json("data/clean_data_filtered.json", orient='records', lines=True)
+    write_clean_data(df, "data/clean_data_filtered.csv")
+    csv_to_json("data/clean_data_filtered.csv", "data/clean_data_filtered.json")
     
     # # Detect nulls
     # nulls = detect_nulls(df)
     # print("Null değerlerin özeti:")
     # print(nulls)
 
-    return encoder.get_dataframe()
+    return df
+    # return encoder.get_dataframe()
