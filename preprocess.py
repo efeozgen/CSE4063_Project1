@@ -27,9 +27,9 @@ def csv_to_json(csv_file, json_file):
 
     with open(json_file, "w", encoding="utf-8") as jsonfile:
         json.dump(data, jsonfile, ensure_ascii=False, indent=4)
-    # print(
-    #     f"CSV dosyasından JSON formatına dönüştürüldü ve {json_file} dosyasına kaydedildi."
-    # )
+    print(
+        f"CSV dosyasından JSON formatına dönüştürüldü ve {json_file} dosyasına kaydedildi."
+    )
 
 
 # Detecting null values
@@ -118,8 +118,6 @@ def preprocess_data(datapath):
     # Eğer track_popularity 100 ise popularity_label'ı 3 olarak ayarla
     df.loc[df["track_popularity"] == 100, "popularity_label"] = 3
 
-    # print(df["popularity_label"])
-
     # Release date labeling
     bins_date = [
         df["track_album_release_date"].min(),
@@ -148,13 +146,13 @@ def preprocess_data(datapath):
         labels=labels_release_date,
     )
 
-    # print(
-    #     f"number of duplicate track_id's before handle duplicate => {df['track_id'].duplicated().sum()}"
-    # )
+    print(
+        f"number of duplicate track_id's before handle duplicate => {df['track_id'].duplicated().sum()}"
+    )
     df = handle_duplicates(df)
-    # print(
-    #     f"number of duplicate track_id's after handle duplicate => {df['track_id'].duplicated().sum()}"
-    # )
+    print(
+        f"number of duplicate track_id's after handle duplicate => {df['track_id'].duplicated().sum()}"
+    )
 
     df = drop_columns(df, ["track_id"])
 
@@ -166,9 +164,6 @@ def preprocess_data(datapath):
     df = encoder.one_hot_encode("playlist_subgenre", "subgenre")
     # df = encoder.label_encode("popularity_label")
     
-    # df = df[df["track_artist_encoded"] != ""]
-
-
 
     columns_to_drop = [
         "track_artist",
@@ -178,29 +173,7 @@ def preprocess_data(datapath):
         # "track_popularity",
         "playlist_subgenre",
     ]
-    # columns_to_drop = [
-    # "track_artist",
-    # "track_album_release_date",
-    # "release_date_label",
-    # "playlist_genre",
-    # "track_popularity",
-    # "playlist_subgenre",
-    # "key",
-    # "mode",
-    # "speechiness",
-    # "valence",
-    # "tempo",
-    # # "genre_r&b",
-    # # "genre_rap",
-    # # "genre_rock",
-    # # "subgenre_album rock",
-    # # "subgenre_classic rock",
-    # # "subgenre_electropop",
-    # # "subgenre_indie poptimism",
-    # # "subgenre_latin hip hop",
-    # # "subgenre_pop edm",
-    # # "subgenre_tropical"
-    # ]
+    
     df = encoder.drop_original_columns(columns_to_drop)
     
     # Korelasyon matrisini hesaplayın
@@ -213,7 +186,7 @@ def preprocess_data(datapath):
     plt.figure(figsize=(10, 8))
     sns.heatmap(correlation_with_target, annot=True, cmap="coolwarm", vmin=-0.15, vmax=0.15)
     plt.title("Correlation with track_popularity and popularity_label")
-    plt.show()
+    # plt.show()
     
     # Korelasyonu düşük olan özellikleri belirleyin
     threshold = 0.05  # Korelasyon eşiği
@@ -222,7 +195,7 @@ def preprocess_data(datapath):
         (correlation_with_target["popularity_label"].abs() < threshold)
     ].index.tolist()
     
-    low_correlation_features = [feature for feature in low_correlation_features if "subgenre" not in feature and "genre" not in feature]
+    low_correlation_features = [feature for feature in low_correlation_features if "subgenre" not in feature and "genre" not in feature and "encoded" not in feature]
 
     # Korelasyonu düşük olan özellikleri veri setinden düşürün
     df = df.drop(columns=low_correlation_features)
@@ -234,9 +207,8 @@ def preprocess_data(datapath):
         }
     )
     
-    print(drops)
+    print("Dropped low correlation features:\n", drops)
     
-    # df.to_json("data/clean_data_filtered.json", orient='records', lines=True)
     write_clean_data(df, "data/clean_data_filtered.csv")
     csv_to_json("data/clean_data_filtered.csv", "data/clean_data_filtered.json")
     

@@ -1,0 +1,24 @@
+{"Model":"SVM","Split Method":"Bagging","Mean Accuracy":0.5250352609}
+{"Model":"SVM","Split Method":"Boosting","Mean Accuracy":0.5224788434}
+{"Model":"SVM","Split Method":"Cross Validation","Mean Accuracy":0.5218294945}
+{"Model":"SVM","Split Method":"Holdout","Mean Accuracy":0.5202750353}
+{"Model":"Naive Bayes","Split Method":"Holdout","Mean Accuracy":0.5200987306}
+{"Model":"Naive Bayes","Split Method":"Cross Validation","Mean Accuracy":0.5193957877}
+{"Model":"ANN 1 Hidden","Split Method":"Holdout","Mean Accuracy":0.5153385049}
+{"Model":"Naive Bayes","Split Method":"Bagging","Mean Accuracy":0.514809591}
+{"Model":"Naive Bayes","Split Method":"Boosting","Mean Accuracy":0.5144275976}
+{"Model":"Gain Ratio","Split Method":"Cross Validation","Mean Accuracy":0.5044785113}
+{"Model":"Gini Index","Split Method":"Cross Validation","Mean Accuracy":0.5006697214}
+{"Model":"Gini Index","Split Method":"Holdout","Mean Accuracy":0.499471086}
+{"Model":"Gini Index","Split Method":"Boosting","Mean Accuracy":0.4983251058}
+{"Model":"Gain Ratio","Split Method":"Holdout","Mean Accuracy":0.4975317348}
+{"Model":"Gini Index","Split Method":"Bagging","Mean Accuracy":0.4945345557}
+{"Model":"Gain Ratio","Split Method":"Bagging","Mean Accuracy":0.4922425952}
+{"Model":"Gain Ratio","Split Method":"Boosting","Mean Accuracy":0.4920369064}
+{"Model":"ANN 2 Hidden","Split Method":"Boosting","Mean Accuracy":0.488687118}
+{"Model":"ANN 1 Hidden","Split Method":"Boosting","Mean Accuracy":0.4850434885}
+{"Model":"ANN 2 Hidden","Split Method":"Cross Validation","Mean Accuracy":0.4514069553}
+{"Model":"ANN 1 Hidden","Split Method":"Cross Validation","Mean Accuracy":0.4321810866}
+{"Model":"ANN 2 Hidden","Split Method":"Bagging","Mean Accuracy":0.3557827927}
+{"Model":"ANN 2 Hidden","Split Method":"Holdout","Mean Accuracy":0.355606488}
+{"Model":"ANN 1 Hidden","Split Method":"Bagging","Mean Accuracy":0.3554301834}
