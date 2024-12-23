@@ -2,7 +2,7 @@ from sklearn.neural_network import MLPClassifier
 
 class ANNTwoHiddenLayers:
     def __init__(self):
-        self.model = MLPClassifier(hidden_layer_sizes=(100, 50), random_state=42, max_iter=500)
+        self.model = MLPClassifier(hidden_layer_sizes=(20, 10), random_state=42, max_iter=500)
 
     def fit(self, X, y):
         self.model.fit(X, y)
